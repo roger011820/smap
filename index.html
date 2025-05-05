@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Free Location Picker</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Leaflet Image Plugin -->
+  <script src="https://unpkg.com/leaflet-image/leaflet-image.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+
+    input, button {
+      width: calc(100% - 2px);
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #map {
+      width: 90%;
+      height: 300px;
+      margin: 20px auto;
+      display: none;
+    }
+
+    #confirmBtn {
+      display: none;
+      margin-top: 10px;
+    }
+
+    #finalResult {
+      display: none;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    #finalImage {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .final-details {
+      text-align: left;
+      max-width: 300px;
+    }
+
+    .final-details p {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Free Location Picker</h2>
+
+  <div class="form-container" id="formSection">
+    <input type="text" id="employer" placeholder="Name of Employer" required>
+    <input type="text" id="contact" placeholder="Contact Number">
+    
+    <button onclick="setLocationFromGPS()">Track My Location</button>
+  </div>
+
+  <div id="map"></div>
+  <button id="confirmBtn" onclick="confirmLocation()">Confirm Location</button>
+
+  <div id="finalResult">
+    <img id="finalImage" src="" alt="Captured Map Image">
+    <div class="final-details">
+      <h3>Final Location Details</h3>
+      <p><strong>Employer:</strong> <span id="showEmployer"></span></p>
+      <p><strong>Contact Number:</strong> <span id="showContact"></span></p>
+      <p><strong>Latitude:</strong> <span id="showLat"></span></p>
+      <p><strong>Longitude:</strong> <span id="showLng"></span></p>
+
+      <button onclick="saveDetails()">Save</button>
+    </div>
+  </div>
+
+  <script>
+    let map;
+    let marker;
+
+    function setLocationFromGPS() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          document.getElementById("formSection").style.display = "none";
+          document.getElementById("map").style.display = "block";
+
+          initMap(lat, lon);
+
+          document.getElementById("confirmBtn").style.display = "inline-block";
+        }, function(error) {
+          alert("Unable to retrieve your location. Please ensure GPS is enabled.");
+        });
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    }
+
+    function initMap(lat, lon) {
+      map = L.map('map').setView([lat, lon], 17);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+    }
+
+    function confirmLocation() {
+      leafletImage(map, function(err, canvas) {
+        if (!err) {
+          document.getElementById("finalImage").src = canvas.toDataURL("image/png");
+        }
+
+        document.getElementById("map").style.display = "none";
+        document.getElementById("confirmBtn").style.display = "none";
+        document.getElementById("finalResult").style.display = "flex";
+
+        document.getElementById("showEmployer").innerText = document.getElementById("employer").value;
+        document.getElementById("showContact").innerText = document.getElementById("contact").value;
+
+        const currentPos = marker.getLatLng();
+        document.getElementById("showLat").innerText = currentPos.lat.toFixed(6);
+        document.getElementById("showLng").innerText = currentPos.lng.toFixed(6);
+      });
+    }
+
+    function saveDetails() {
+      alert("Location details saved!");
+      // Implement saving logic here
+    }
+  </script>
+
+</body>
+</html>
