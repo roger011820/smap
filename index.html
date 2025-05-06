@@ -98,9 +98,10 @@
   <h2>Free Location Picker</h2>
 
   <div class="form-container" id="formSection">
-    <input type="text" id="employer" placeholder="Name of Employer" required>
-    <input type="text" id="contact" placeholder="Contact Number">
-    
+    <input type="text" id="businessName" placeholder="BUSINESS NAME" required>
+    <input type="text" id="ownerName" placeholder="NAME OF OWNER" required>
+    <input type="text" id="contact" placeholder="CONTACT NUMBER" required>
+
     <button onclick="setLocationFromGPS()">Track My Location</button>
   </div>
 
@@ -111,7 +112,8 @@
     <img id="finalImage" src="" alt="Captured Map Image">
     <div class="final-details">
       <h3>Final Location Details</h3>
-      <p><strong>Employer:</strong> <span id="showEmployer"></span></p>
+      <p><strong>Business Name:</strong> <span id="showBusinessName"></span></p>
+      <p><strong>Owner Name:</strong> <span id="showOwnerName"></span></p>
       <p><strong>Contact Number:</strong> <span id="showContact"></span></p>
       <p><strong>Latitude:</strong> <span id="showLat"></span></p>
       <p><strong>Longitude:</strong> <span id="showLng"></span></p>
@@ -164,7 +166,8 @@
         document.getElementById("confirmBtn").style.display = "none";
         document.getElementById("finalResult").style.display = "flex";
 
-        document.getElementById("showEmployer").innerText = document.getElementById("employer").value;
+        document.getElementById("showBusinessName").innerText = document.getElementById("businessName").value;
+        document.getElementById("showOwnerName").innerText = document.getElementById("ownerName").value;
         document.getElementById("showContact").innerText = document.getElementById("contact").value;
 
         const currentPos = marker.getLatLng();
@@ -175,7 +178,7 @@
 
     function saveDetails() {
       alert("Location details saved!");
-      // Implement saving logic here
+      // Add AJAX or PHP code here to save data to your database
     }
   </script>
 
